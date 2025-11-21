@@ -118,7 +118,7 @@ const ShopList = ({ category }: { category: Category }) => {
                       >
                         <button className="px-5 py-2 text-base font-nanum rounded-xl bg-primary text-white border border-white cursor-pointer">
                           <a
-                            href={item.url2 ? item.url2 : item.url1}
+                            href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

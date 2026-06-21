@@ -5,6 +5,7 @@ const Header = ({
   videoRef,
   shopRef,
   guideRef,
+  malasseziaRef,
   chatRef,
   communityRef,
   contactRef,
@@ -13,6 +14,7 @@ const Header = ({
   videoRef: React.RefObject<HTMLDivElement | null>;
   shopRef: React.RefObject<HTMLDivElement | null>;
   guideRef: React.RefObject<HTMLDivElement | null>;
+  malasseziaRef: React.RefObject<HTMLDivElement | null>;
   chatRef: React.RefObject<HTMLDivElement | null>;
   communityRef: React.RefObject<HTMLDivElement | null>;
   contactRef: React.RefObject<HTMLDivElement | null>;
@@ -76,8 +78,11 @@ const Header = ({
           >
             Guide
           </li>
-          <li className="cursor-pointer pl-7">
-            <a href="/malassezia">Malassezia</a>
+          <li
+            className="cursor-pointer pl-7"
+            onClick={() => scrollToSection(malasseziaRef)}
+          >
+            Malassezia
           </li>
           <li
             className="cursor-pointer pl-7"
@@ -137,46 +142,49 @@ const Header = ({
         <ul className="flex flex-col gap-4 text-primary text-lg font-semibold">
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(aboutRef)}
+            onClick={() => { scrollToSection(aboutRef); setIsOpen(false); }}
           >
             About Me
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(videoRef)}
+            onClick={() => { scrollToSection(videoRef); setIsOpen(false); }}
           >
             Videos
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(shopRef)}
+            onClick={() => { scrollToSection(shopRef); setIsOpen(false); }}
           >
             Shop
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(guideRef)}
+            onClick={() => { scrollToSection(guideRef); setIsOpen(false); }}
           >
             Guide
           </li>
-          <li className="cursor-pointer">
-            <a href="/malassezia">Malassezia</a>
+          <li
+            className="cursor-pointer"
+            onClick={() => { scrollToSection(malasseziaRef); setIsOpen(false); }}
+          >
+            Malassezia
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(chatRef)}
+            onClick={() => { scrollToSection(chatRef); setIsOpen(false); }}
           >
             Chat
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(communityRef)}
+            onClick={() => { scrollToSection(communityRef); setIsOpen(false); }}
           >
             Community
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => scrollToSection(contactRef)}
+            onClick={() => { scrollToSection(contactRef); setIsOpen(false); }}
           >
             Contact
           </li>

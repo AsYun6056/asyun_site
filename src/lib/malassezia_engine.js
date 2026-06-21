@@ -147,7 +147,7 @@
     if(NEW_DISP[en]) return {cat:NEW_DISP[en],tier:"disp"};
     if(MED_TRIG[en]) return {cat:MED_TRIG[en],tier:"med"};
     // 4) 영문 강 리스트
-    if(STRONG.has(en)) return {cat:"다합 트리거",tier:"strong"};
+    if(STRONG.has(en)) return {cat:"복수 출처 확인 성분",tier:"strong"};
     // 5) 영문 규칙
     for(const r of FA_ROOTS){ if(en.includes(r+" acid")) return {cat:"지방산",tier:"strong"}; }
     for(const r of ESTER_ROOTS){ if(en.endsWith(r)) return {cat:"에스터",tier:"med"}; }

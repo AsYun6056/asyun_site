@@ -4,78 +4,101 @@ import { useState } from "react";
 import Engine from "@/lib/malassezia_engine";
 import type { AnalyzeResult, Tier } from "@/lib/malassezia_engine";
 
-const TIER_LABEL: Record<Tier, string> = {
-  strong: "높음 · 피피 권장",
-  med: "중간 · 주의",
-  disp: "개인차 · 패치테스트",
-};
-const TIER_DOT: Record<Tier, string> = {
+const DOT_CLASS: Record<Tier, string> = {
   strong: "bg-[#c0392b]",
-  med: "bg-[#cf8a2e]",
-  disp: "bg-[#c9a227]",
+  med:    "bg-[#e07b2a]",
+  disp:   "bg-[#c9a227]",
 };
+
+const LEGEND = [
+  { color: "bg-[#c0392b]", label: "유발 가능성 높음" },
+  { color: "bg-[#e07b2a]", label: "유발 가능성 중간" },
+  { color: "bg-[#c9a227]", label: "개인차 (출처마다 평가 갈림 · 패치 테스트 권장됨)" },
+  { color: "bg-[#3f9b63]", label: "안전" },
+];
 
 const Malassezia = ({
   refItem,
 }: {
   refItem: React.RefObject<HTMLDivElement | null>;
 }) => {
-  const [input, setInput] = useState("");
-  const [res, setRes] = useState<AnalyzeResult | null>(null);
+  const [input, setInput]       = useState("");
+  const [res, setRes]           = useState<AnalyzeResult | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
-  const run = (t: string) => setRes(t.trim() ? Engine.analyze(t) : null);
+  const [phase, setPhase]       = useState<"input" | "results">("input");
+  const [visible, setVisible]   = useState(true);
+
+  const fade = (cb: () => void) => {
+    setVisible(false);
+    setTimeout(() => { cb(); setVisible(true); }, 350);
+  };
+
+  const handleAnalyze = () => {
+    if (!input.trim()) return;
+    fade(() => { setRes(Engine.analyze(input)); setPhase("results"); });
+  };
+
+  const handleReset = () => {
+    fade(() => { setRes(null); setInput(""); setPhase("input"); });
+  };
 
   return (
     <div
       ref={refItem}
-      className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-center"
-      style={{ backgroundImage: "url('/drive-images/말라세지아 사진 크기 2500.png')" }}
+      className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-center bg-[#555]"
+      style={{ backgroundImage: "url('/drive-images/말라세지아%20사진%20크기%202500.png')" }}
     >
-      {/* 어두운 오버레이 */}
-      <div className="absolute inset-0 bg-black/50" />
+      {/* 오버레이 */}
+      <div className="absolute inset-0 bg-black/55" />
 
       {/* 콘텐츠 */}
-      <div className="relative z-10 flex flex-col items-start justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-6 py-14 md:px-16 md:py-20 max-w-2xl">
-        <h1 className="text-3xl leading-snug font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
-          말라세지아 모낭염 유발성분,
-          <br />
-          <span className="text-[#e8836e]">에즈윤과 함께 체크해요~</span>
-        </h1>
+      <div
+        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-6 py-14 md:px-16 md:py-20 max-w-2xl transition-opacity duration-350 ${visible ? "opacity-100" : "opacity-0"}`}
+      >
 
-        <p className="mt-5 text-white/80 md:text-lg">
-          민감 피부일로, 성분 확인을 더 꼼꼼하게!
-          <br />
-          쉽고 빠르게 말라세지아 모낭염 유발 성분을 체크해 보세요~
-        </p>
+        {/* ── 입력 화면 ── */}
+        {phase === "input" && (
+          <>
+            <h1 className="text-3xl leading-snug font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
+              말라세지아 모낭염 유발성분,
+              <br />
+              <span className="text-[#e8836e]">에즈윤과 함께 체크해요~</span>
+            </h1>
 
-        <p className="mt-4 text-white/90">
-          ▼{" "}
-          <button
-            onClick={() => setGuideOpen(true)}
-            className="underline text-white/90"
-          >
-            사용 가이드
-          </button>
-          를 참고해, 제품의 전 성분을 입력해 주세요.
-        </p>
+            <p className="mt-5 text-white/80 md:text-lg">
+              민감 피부일로, 성분 확인을 더 꼼꼼하게!
+              <br />
+              쉽고 빠르게 말라세지아 모낭염 유발 성분을 체크해 보세요~
+            </p>
 
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="예) 정제수, 글리세린, 글리세릴스테아레이트, 폴리소르베이트60, 올리브오일 ..."
-          className="mt-3 min-h-[130px] w-full resize-y rounded border border-white/40 bg-white/15 p-4 text-[16px] text-white placeholder:text-white/50 outline-none focus:border-white/70 backdrop-blur-sm"
-        />
-        <button
-          onClick={() => run(input)}
-          className="mt-3 rounded bg-white px-7 py-3 tracking-widest text-[#20201e] font-semibold transition hover:bg-[#e8836e] hover:text-white"
-        >
-          분석하기
-        </button>
+            <p className="mt-4 text-white/90">
+              ▼{" "}
+              <button onClick={() => setGuideOpen(true)} className="underline text-white/90">
+                사용 가이드
+              </button>
+              를 참고해, 제품의 전 성분을 입력해 주세요.
+            </p>
 
-        {res && (
-          <section className="mt-7 w-full">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="예) 정제수, 글리세린, 글리세릴스테아레이트, 폴리소르베이트60, 올리브오일 ..."
+              className="mt-3 min-h-[130px] w-full resize-y rounded border border-white/40 bg-white/15 p-4 text-[16px] text-white placeholder:text-white/50 outline-none focus:border-white/70 backdrop-blur-sm"
+            />
+            <button
+              onClick={handleAnalyze}
+              className="mt-3 rounded bg-white px-7 py-3 tracking-widest text-[#20201e] font-semibold transition hover:bg-[#e8836e] hover:text-white self-start"
+            >
+              분석하기
+            </button>
+          </>
+        )}
+
+        {/* ── 결과 화면 ── */}
+        {phase === "results" && res && (
+          <>
             <h2
-              className="mb-2 text-xl font-semibold"
+              className="text-2xl font-semibold mb-4"
               style={{
                 color:
                   res.flagged.length === 0
@@ -91,42 +114,56 @@ const Malassezia = ({
                 ? `⚠️ 주의 — 유발 성분 ${res.flagged.length}개 감지`
                 : `🟡 참고 — 약한·개인차 성분 ${res.flagged.length}개`}
             </h2>
-            <div className="mb-3 flex flex-wrap gap-2 text-sm">
+
+            {/* 요약 뱃지 */}
+            <div className="mb-4 flex flex-wrap gap-2 text-sm">
               <span className="rounded-full bg-[#f6dcd8]/80 px-3 py-1 text-[#c0392b]">높음 {res.counts.strong}</span>
               <span className="rounded-full bg-[#f6e6cf]/80 px-3 py-1 text-[#9a6512]">중간 {res.counts.med}</span>
               <span className="rounded-full bg-[#f4eccb]/80 px-3 py-1 text-[#8a7414]">개인차 {res.counts.disp}</span>
               <span className="rounded-full bg-white/20 px-3 py-1 text-white">검사 {res.total}개</span>
             </div>
+
+            {/* 성분 테이블: 성분명 + 색점만 */}
             {res.flagged.length > 0 && (
               <table className="w-full overflow-hidden rounded border border-white/30 bg-black/40 text-left text-sm text-white backdrop-blur-sm">
                 <thead>
-                  <tr className="bg-white/10 text-white/70">
+                  <tr className="bg-white/10 text-white/60">
                     <th className="p-2.5 font-semibold">성분</th>
-                    <th className="p-2.5 font-semibold">분류</th>
-                    <th className="p-2.5 font-semibold">주의도</th>
+                    <th className="p-2.5 font-semibold w-12 text-center">위험도</th>
                   </tr>
                 </thead>
                 <tbody>
                   {res.flagged.map((f, i) => (
                     <tr key={i} className="border-t border-white/20">
                       <td className="p-2.5">{f.name}</td>
-                      <td className="p-2.5 text-white/70">{f.cat}</td>
-                      <td className="p-2.5">
-                        <span className={`mr-2 inline-block h-2 w-2 rounded-full align-middle ${TIER_DOT[f.tier]}`} />
-                        {TIER_LABEL[f.tier]}
+                      <td className="p-2.5 text-center">
+                        <span className={`inline-block h-3 w-3 rounded-full ${DOT_CLASS[f.tier]}`} />
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             )}
-          </section>
-        )}
 
-        <p className="mt-7 text-xs leading-relaxed text-white/50">
-          본 분석은 말라세지아가 이용할 수 있다고 알려진 C11–C24 지방산, 지방산 에스터, 폴리소르베이트,
-          식물성 오일·버터, 일부 발효·효모 성분 등을 기준으로 합니다. 결과는 의학적 진단이 아닌 제품 선택의 참고용입니다.
-        </p>
+            {/* 범례 */}
+            <div className="mt-4 flex flex-col gap-1.5 text-sm text-white/80">
+              {LEGEND.map((l) => (
+                <div key={l.label} className="flex items-center gap-2">
+                  <span className={`inline-block h-3 w-3 flex-shrink-0 rounded-full ${l.color}`} />
+                  <span>{l.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* 다시 분석하기 */}
+            <button
+              onClick={handleReset}
+              className="mt-6 self-start rounded border border-white/60 px-6 py-2.5 text-white/90 text-sm transition hover:bg-white/20"
+            >
+              다시 분석하기
+            </button>
+          </>
+        )}
       </div>
 
       {/* 사용 가이드 팝업 */}
@@ -149,20 +186,39 @@ const Malassezia = ({
             <h2 className="mb-6 text-2xl font-bold">사용 가이드</h2>
             <div className="space-y-5 text-[15px] leading-relaxed">
               <div>
-                <p className="font-bold"><span className="underline">Step 1</span>: 전 성분을 입력해 주세요.</p>
-                <p className="text-[#54504a]">확인하고 싶은 제품의 전 성분을 입력해 주세요.<br />단일 성분만 입력해도 되고, 제품 전 성분 전체를 복사해 붙여넣으셔도 됩니다.</p>
+                <p className="font-bold"><span className="underline">Step 1</span>: 전성분을 입력해 주세요.</p>
+                <p className="text-[#54504a]">
+                  확인하고 싶으신 제품의 전성분을 입력해 주세요.<br />
+                  단일 성분만 입력해도 되고, 제품 전성분 전체를 복사해 붙여넣으셔도 됩니다.
+                </p>
               </div>
               <div>
-                <p className="font-bold"><span className="underline">Step 2</span>: 구분자 표기를 확인해 주세요.</p>
-                <p className="text-[#54504a]">성분이 쉼표(,)로 구분되면 가장 정확합니다.<br />한글·영문 모두 인식하지만, 구분자가 없으면 인식이 어려울 수 있어요.</p>
+                <p className="font-bold"><span className="underline">Step 2</span>: 오타와 표기를 확인해 주세요.</p>
+                <p className="text-[#54504a]">
+                  성분이 쉼표(,)로 구분되면 가장 정확합니다.<br />
+                  한글·영문 모두 인식하지만, 오타가 있으면 인식이 어려울 수 있습니다.
+                </p>
               </div>
               <div>
                 <p className="font-bold"><span className="underline">Step 3</span>: 검색 버튼을 눌러 주세요.</p>
-                <p className="text-[#54504a]">분석하기 버튼을 누르면 입력한 성분 중 말라세지아 모낭염의 주의가 필요하다고 알려진 성분을 찾아 보여줍니다.</p>
+                <p className="text-[#54504a]">
+                  검색 버튼을 누르면 입력한 성분 중 말라세지아 모낭염에 주의가 필요하다고 알려진 성분을 찾아 보여줍니다.
+                </p>
               </div>
               <div>
                 <p className="font-bold"><span className="underline">Step 4</span>: 결과는 참고 기준으로 확인해 주세요.</p>
-                <p className="text-[#54504a]">성분 반응은 개인의 피부 상태, 성분의 농도, 제품의 유형에 따라 달라질 수 있습니다. 결과는 의학적 진단이 아닌 참고용이며, 새로운 제품 사용 전 패치 테스트를 권장합니다.</p>
+                <p className="text-[#54504a]">
+                  본 체커는 말라세지아 피부에서 주의가 필요하다고 알려진 성분을 보다 쉽게 확인할 수 있도록 만든 참고 도구입니다.
+                </p>
+                <p className="mt-3 text-[#54504a]">
+                  분석 기준은 말라세지아가 이용할 수 있는 C11–C24 지방산, 지방산 에스터, 폴리소르베이트, 소르비탄 계열, 식물성 오일·버터, 일부 발효·효모 성분 등을 중심으로 구성했습니다. 여기에 해외 말라세지아 성분 체커와 관련 논문 자료를 함께 참고해, 성분별 주의도를 가능성 높음·중간·개인차(출처마다 평가가 갈림 · 패치테스트 권장) 단계로 나누어 분류했습니다.
+                </p>
+                <p className="mt-3 text-[#54504a]">
+                  다만 성분 반응은 개인의 피부 상태, 성분의 농도, 제품의 제형, 함께 사용한 제품에 따라 달라질 수 있습니다. 따라서 본 결과는 의학적 진단이나 절대적인 안전 판정이 아니라, 제품을 고를 때 참고할 수 있는 성분 체크 기준으로 봐주세요.
+                </p>
+                <p className="mt-3 text-[#54504a]">
+                  새로운 제품은 얼굴 전체에 사용하기 전 패치 테스트를 권장하며, 가려움·붉어짐·모낭염 등 증상이 지속되거나 악화될 경우에는 피부과 전문의와 상담해 주세요.
+                </p>
               </div>
             </div>
             <div className="mt-7 text-center">

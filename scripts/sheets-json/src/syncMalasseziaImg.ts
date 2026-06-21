@@ -3,14 +3,12 @@ import { google } from "googleapis";
 import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
-import pLimit from "p-limit";
 import { loadServiceAccount } from ".";
 
 type SAJson = { client_email: string; private_key: string };
 
 const DRIVE_FOLDER_ID = process.env.MALASSEZIA_FOLDER_ID;
 const DRIVE_IMAGE_DIR = process.env.DRIVE_IMAGE_DIR || "public/drive-images";
-const CONCURRENCY = 3;
 
 async function withRetry<T>(fn: () => Promise<T>, times = 3, delayMs = 800): Promise<T> {
   let lastErr: unknown;
@@ -70,31 +68,28 @@ async function main() {
     return !cur || cur.md5 !== f.md5Checksum || cur.name !== f.name;
   });
 
-  const limit = pLimit(CONCURRENCY);
-  await Promise.all(
-    toDownload.map((file) =>
-      limit(async () => {
-        // 한글·공백 파일명 대신 고정 ASCII 이름으로 저장
-        const ext = path.extname(file.name) || ".png";
-        const destName = `malassezia-bg${ext}`;
-        const destPath = path.join(DRIVE_IMAGE_DIR, destName);
-        await withRetry(() =>
-          new Promise<void>((resolve, reject) => {
-            drive.files.get({ fileId: file.id, alt: "media" }, { responseType: "stream" })
-              .then((res) => {
-                const ws = fs.createWriteStream(destPath);
-                res.data.pipe(ws);
-                ws.on("finish", resolve);
-                ws.on("error", reject);
-              })
-              .catch(reject);
+  // 이름 오름차순 정렬 → 마지막(해상도 가장 높은) 파일이 malassezia-bg로 남음
+  // 순차 실행 → 같은 파일명에 동시에 쓰는 race condition 방지
+  toDownload.sort((a, b) => a.name.localeCompare(b.name));
+  for (const file of toDownload) {
+    const ext = path.extname(file.name) || ".png";
+    const destName = `malassezia-bg${ext}`;
+    const destPath = path.join(DRIVE_IMAGE_DIR, destName);
+    await withRetry(() =>
+      new Promise<void>((resolve, reject) => {
+        drive.files.get({ fileId: file.id, alt: "media" }, { responseType: "stream" })
+          .then((res) => {
+            const ws = fs.createWriteStream(destPath);
+            res.data.pipe(ws);
+            ws.on("finish", resolve);
+            ws.on("error", reject);
           })
-        );
-        meta.files[file.id] = { name: destName, md5: file.md5Checksum || "" };
-        console.log(`⬇️  downloaded: ${file.name} → ${destName}`);
+          .catch(reject);
       })
-    )
-  );
+    );
+    meta.files[file.id] = { name: destName, md5: file.md5Checksum || "" };
+    console.log(`⬇️  downloaded: ${file.name} → ${destName}`);
+  }
 
   const keepIds = new Set(files.map((f) => f.id));
   for (const [id, info] of Object.entries(meta.files)) {

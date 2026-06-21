@@ -6,6 +6,7 @@
     "export:shop": "tsx scripts/sheets-json/src/shopListToJson.ts",
     "export:video": "tsx scripts/sheets-json/src/videoListToJson.ts",
     "export:img": "tsx scripts/sheets-json/src/syncDriveShopImg.ts",
+    "export:malassezia-img": "tsx scripts/sheets-json/src/syncMalasseziaImg.ts",
     "dev": "next dev",
     "prebuild": "run-p --print-label --aggregate-output export:*",
     "build": "next build",

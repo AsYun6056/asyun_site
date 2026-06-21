@@ -125,7 +125,7 @@ export default function MalasseziaPage() {
         {/* 오른쪽: 인물 사진 (public/malassezia-hero.png) */}
         <div className="relative min-h-[280px] md:min-h-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/malassezia-hero.png" alt="AsYun 말라세지아 체커" className="absolute inset-0 h-full w-full object-cover object-top" />
+          <img src="/drive-images/말라세지아 사진 크기 2500.png" alt="AsYun 말라세지아 체커" className="absolute inset-0 h-full w-full object-cover object-top" />
         </div>
       </div>
 

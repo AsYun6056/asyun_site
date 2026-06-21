@@ -50,11 +50,11 @@ const About = ({
               에즈윤은 여러분의 피부 여정을 함께하는 친구 같은 채널이 되고자
               합니다.
             </p>
-            <div className="bg-red-100 w-full md:w-2/3 p-5 rounded-xl mt-3">
+            <div className="bg-red-100 w-fit max-w-full p-5 rounded-xl mt-3">
               <span className="text-primary">
                 이런 분들을 위해 만들었습니다
               </span>
-              <ul className="whitespace-nowrap">
+              <ul className="md:whitespace-nowrap">
                 <li>✔️ 화장을 안하면 외출이 불안한 분들</li>
                 <li>✔️ 피부가 좋아지는 법을 제대로 알고 싶은 분들</li>
                 <li>✔️ 수많은 정보 사이에서 방향을 잃은 분들</li>

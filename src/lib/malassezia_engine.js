@@ -161,7 +161,15 @@
 
   // 전 성분 텍스트 → 분석 결과
   function analyze(text){
-    const toks = (text||"").split(/[,\n;·•/]/).map(t=>t.trim()).filter(Boolean);
+    const raw = (text||"").split(/[,\n;·•/]/).map(t=>t.trim()).filter(Boolean);
+    // 동일 성분 중복 제거 (대소문자·공백 무시)
+    const seen = new Set();
+    const toks = raw.filter(t => {
+      const key = t.toLowerCase().replace(/\s+/g,"");
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     const flagged=[]; let strong=0,med=0,disp=0;
     for(const t of toks){
       const r=classify(t);

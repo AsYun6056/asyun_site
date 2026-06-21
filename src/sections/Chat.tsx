@@ -43,7 +43,7 @@ const Chat = ({
             <div className="w-full">
               <div className="h-full flex flex-col text-base sm:text-sm md:text-base leading-7 px-10 pt-5 md:p-0 break-keep">
                 <span className="bg-red-100 w-72">
-                  📍 "에즈윤 민감피부케어 카톡방"이란?
+                  &nbsp;&nbsp;📍 "에즈윤 민감피부케어 카톡방"이란?
                 </span>
                 <p className="mt-3">
                   홍조, 여드름, 모낭염, 지루성피부염 등

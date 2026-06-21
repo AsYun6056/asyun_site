@@ -19,7 +19,7 @@ const Guide = ({
             민감성 피부를 위한 무료 자료집
           </div>
           <div className="w-full flex md:flex-row flex-col items-center justify-evenly md:pt-10">
-            <div className="w-full md:w-[45%] hidden md:block">
+            <div className="w-full md:w-[45%] hidden md:block md:pl-10">
               <div className="w-full">
                 <iframe
                   src="https://www.youtube.com/embed/biRAo_91AMo"

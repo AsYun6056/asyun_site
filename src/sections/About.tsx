@@ -54,7 +54,7 @@ const About = ({
               <span className="text-primary">
                 이런 분들을 위해 만들었습니다
               </span>
-              <ul>
+              <ul className="whitespace-nowrap">
                 <li>✔️ 화장을 안하면 외출이 불안한 분들</li>
                 <li>✔️ 피부가 좋아지는 법을 제대로 알고 싶은 분들</li>
                 <li>✔️ 수많은 정보 사이에서 방향을 잃은 분들</li>

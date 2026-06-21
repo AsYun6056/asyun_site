@@ -4,29 +4,41 @@ import { useState } from "react";
 import Engine from "@/lib/malassezia_engine";
 import type { AnalyzeResult, Tier } from "@/lib/malassezia_engine";
 
+// 파스텔 색상
 const DOT_CLASS: Record<Tier, string> = {
-  strong: "bg-[#c0392b]",
-  med:    "bg-[#e07b2a]",
-  disp:   "bg-[#c9a227]",
+  strong: "bg-[#f2a0a0]",   // 파스텔 레드
+  med:    "bg-[#f5c08a]",   // 파스텔 오렌지
+  disp:   "bg-[#f0d882]",   // 파스텔 옐로
 };
 
 const LEGEND = [
-  { color: "bg-[#c0392b]", label: "유발 가능성 높음" },
-  { color: "bg-[#e07b2a]", label: "유발 가능성 중간" },
-  { color: "bg-[#c9a227]", label: "개인차 (출처마다 평가 갈림 · 패치 테스트 권장됨)" },
-  { color: "bg-[#3f9b63]", label: "안전" },
+  { color: "bg-[#f2a0a0]", label: "유발 가능성 높음" },
+  { color: "bg-[#f5c08a]", label: "유발 가능성 중간" },
+  { color: "bg-[#f0d882]", label: "개인차 (출처마다 평가 갈림 · 패치 테스트 권장됨)" },
+  { color: "bg-[#90d4a0]", label: "안전" },
 ];
+
+// 0 제외 요약 텍스트 생성
+function buildSummary(total: number, counts: AnalyzeResult["counts"]): string {
+  const safe = total - counts.strong - counts.med - counts.disp;
+  const parts: string[] = [];
+  if (counts.strong > 0) parts.push(`🔴 ${counts.strong}개`);
+  if (counts.med    > 0) parts.push(`🟠 ${counts.med}개`);
+  if (counts.disp   > 0) parts.push(`🟡 ${counts.disp}개`);
+  if (safe          > 0) parts.push(`🟢 ${safe}개`);
+  return `총 ${total}개 성분 중 ${parts.join(", ")}`;
+}
 
 const Malassezia = ({
   refItem,
 }: {
   refItem: React.RefObject<HTMLDivElement | null>;
 }) => {
-  const [input, setInput]       = useState("");
-  const [res, setRes]           = useState<AnalyzeResult | null>(null);
+  const [input, setInput]         = useState("");
+  const [res, setRes]             = useState<AnalyzeResult | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
-  const [phase, setPhase]       = useState<"input" | "results">("input");
-  const [visible, setVisible]   = useState(true);
+  const [phase, setPhase]         = useState<"input" | "results">("input");
+  const [visible, setVisible]     = useState(true);
 
   const fade = (cb: () => void) => {
     setVisible(false);
@@ -53,7 +65,7 @@ const Malassezia = ({
 
       {/* 콘텐츠 */}
       <div
-        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-6 py-14 md:px-16 md:py-20 max-w-2xl transition-opacity duration-350 ${visible ? "opacity-100" : "opacity-0"}`}
+        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-6 py-14 md:px-16 md:py-20 max-w-2xl transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
       >
 
         {/* ── 입력 화면 ── */}
@@ -62,11 +74,11 @@ const Malassezia = ({
             <h1 className="text-3xl leading-snug font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
               말라세지아 모낭염 유발성분,
               <br />
-              <span className="text-[#e8836e]">에즈윤과 함께 체크해요~</span>
+              <span className="text-[#b83330]">에즈윤과 함께 체크해요~</span>
             </h1>
 
             <p className="mt-5 text-white/80 md:text-lg">
-              민감 피부일로, 성분 확인을 더 꼼꼼하게!
+              민감 피부일수록, 성분 확인을 더 꼼꼼하게!
               <br />
               쉽고 빠르게 말라세지아 모낭염 유발 성분을 체크해 보세요~
             </p>
@@ -87,7 +99,7 @@ const Malassezia = ({
             />
             <button
               onClick={handleAnalyze}
-              className="mt-3 rounded bg-white px-7 py-3 tracking-widest text-[#20201e] font-semibold transition hover:bg-[#e8836e] hover:text-white self-start"
+              className="mt-3 rounded bg-white px-7 py-3 tracking-widest text-[#20201e] font-semibold transition hover:bg-[#b83330] hover:text-white self-start"
             >
               분석하기
             </button>
@@ -98,47 +110,45 @@ const Malassezia = ({
         {phase === "results" && res && (
           <>
             <h2
-              className="text-2xl font-semibold mb-4"
+              className="text-2xl font-semibold mb-2"
               style={{
                 color:
                   res.flagged.length === 0
-                    ? "#6ee89a"
+                    ? "#90d4a0"
                     : res.counts.strong > 0
-                    ? "#f08080"
-                    : "#f0c060",
+                    ? "#f2a0a0"
+                    : "#f0d882",
               }}
             >
               {res.flagged.length === 0
                 ? "✓ 안전 — 유발 성분 미검출"
                 : res.counts.strong > 0
                 ? `⚠️ 주의 — 유발 성분 ${res.flagged.length}개 감지`
-                : `🟡 참고 — 약한·개인차 성분 ${res.flagged.length}개`}
+                : `참고 — 약한·개인차 성분 ${res.flagged.length}개`}
             </h2>
 
-            {/* 요약 뱃지 */}
-            <div className="mb-4 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-full bg-[#f6dcd8]/80 px-3 py-1 text-[#c0392b]">높음 {res.counts.strong}</span>
-              <span className="rounded-full bg-[#f6e6cf]/80 px-3 py-1 text-[#9a6512]">중간 {res.counts.med}</span>
-              <span className="rounded-full bg-[#f4eccb]/80 px-3 py-1 text-[#8a7414]">개인차 {res.counts.disp}</span>
-              <span className="rounded-full bg-white/20 px-3 py-1 text-white">검사 {res.total}개</span>
-            </div>
+            {/* 요약 한 줄 */}
+            <p className="mb-4 text-sm text-white/70">
+              {buildSummary(res.total, res.counts)}
+            </p>
 
-            {/* 성분 테이블: 성분명 + 색점만 */}
+            {/* 성분 테이블: 점 + 성분명 + 분류 */}
             {res.flagged.length > 0 && (
               <table className="w-full overflow-hidden rounded border border-white/30 bg-black/40 text-left text-sm text-white backdrop-blur-sm">
                 <thead>
                   <tr className="bg-white/10 text-white/60">
                     <th className="p-2.5 font-semibold">성분</th>
-                    <th className="p-2.5 font-semibold w-12 text-center">위험도</th>
+                    <th className="p-2.5 font-semibold text-right pr-4">분류</th>
                   </tr>
                 </thead>
                 <tbody>
                   {res.flagged.map((f, i) => (
                     <tr key={i} className="border-t border-white/20">
-                      <td className="p-2.5">{f.name}</td>
-                      <td className="p-2.5 text-center">
-                        <span className={`inline-block h-3 w-3 rounded-full ${DOT_CLASS[f.tier]}`} />
+                      <td className="p-2.5">
+                        <span className={`mr-2.5 inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full align-middle ${DOT_CLASS[f.tier]}`} />
+                        {f.name}
                       </td>
+                      <td className="p-2.5 text-right pr-4 text-white/60 text-xs">{f.cat}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -149,7 +159,7 @@ const Malassezia = ({
             <div className="mt-4 flex flex-col gap-1.5 text-sm text-white/80">
               {LEGEND.map((l) => (
                 <div key={l.label} className="flex items-center gap-2">
-                  <span className={`inline-block h-3 w-3 flex-shrink-0 rounded-full ${l.color}`} />
+                  <span className={`inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full ${l.color}`} />
                   <span>{l.label}</span>
                 </div>
               ))}
@@ -186,10 +196,10 @@ const Malassezia = ({
             <h2 className="mb-6 text-2xl font-bold">사용 가이드</h2>
             <div className="space-y-5 text-[15px] leading-relaxed">
               <div>
-                <p className="font-bold"><span className="underline">Step 1</span>: 전성분을 입력해 주세요.</p>
+                <p className="font-bold"><span className="underline">Step 1</span>: 전 성분을 입력해 주세요.</p>
                 <p className="text-[#54504a]">
-                  확인하고 싶으신 제품의 전성분을 입력해 주세요.<br />
-                  단일 성분만 입력해도 되고, 제품 전성분 전체를 복사해 붙여넣으셔도 됩니다.
+                  확인하고 싶으신 제품의 전 성분을 입력해 주세요.<br />
+                  단일 성분만 입력해도 되고, 제품 전 성분 전체를 복사해 붙여넣으셔도 됩니다.
                 </p>
               </div>
               <div>

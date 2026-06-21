@@ -61,12 +61,14 @@ const Malassezia = ({
       className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-[#555]"
       style={{ backgroundImage: "url('/drive-images/malassezia-bg.png')", backgroundPosition: "65% center" }}
     >
-      {/* 모바일: 균일 어두운 오버레이 / 데스크탑: 왼쪽→오른쪽 그라데이션 */}
-      <div className="absolute inset-0 bg-black/60 md:bg-none md:bg-gradient-to-r md:from-black/70 md:via-black/45 md:to-black/10" />
+      {/* 모바일 전용: 균일 어두운 오버레이 */}
+      <div className="absolute inset-0 bg-black/62 md:hidden" />
+      {/* 데스크탑 전용: 왼쪽 진하고 오른쪽 투명한 그라데이션 */}
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/70 via-black/45 to-black/10" />
 
       {/* 콘텐츠 */}
       <div
-        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-5 py-10 md:px-16 md:py-20 max-w-[80%] md:max-w-2xl transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-5 py-10 md:px-16 md:py-20 w-full md:max-w-2xl transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
       >
 
         {/* ── 입력 화면 ── */}

@@ -18,15 +18,16 @@ const LEGEND = [
   { color: "bg-[#90d4a0]", label: "안전" },
 ];
 
-// 0 제외 요약 텍스트 생성
-function buildSummary(total: number, counts: AnalyzeResult["counts"]): string {
+type SummaryPart = { color: string; count: number };
+
+function buildSummaryParts(total: number, counts: AnalyzeResult["counts"]): SummaryPart[] {
   const safe = total - counts.strong - counts.med - counts.disp;
-  const parts: string[] = [];
-  if (counts.strong > 0) parts.push(`🔴 ${counts.strong}개`);
-  if (counts.med    > 0) parts.push(`🟠 ${counts.med}개`);
-  if (counts.disp   > 0) parts.push(`🟡 ${counts.disp}개`);
-  if (safe          > 0) parts.push(`🟢 ${safe}개`);
-  return `총 ${total}개 성분 중 ${parts.join(", ")}`;
+  const parts: SummaryPart[] = [];
+  if (counts.strong > 0) parts.push({ color: "bg-[#f2a0a0]", count: counts.strong });
+  if (counts.med    > 0) parts.push({ color: "bg-[#f5c08a]", count: counts.med });
+  if (counts.disp   > 0) parts.push({ color: "bg-[#f0d882]", count: counts.disp });
+  if (safe          > 0) parts.push({ color: "bg-[#90d4a0]", count: safe });
+  return parts;
 }
 
 const Malassezia = ({
@@ -58,7 +59,7 @@ const Malassezia = ({
     <div
       ref={refItem}
       className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-center bg-[#555]"
-      style={{ backgroundImage: "url('/drive-images/말라세지아%20사진%20크기%202500.png')" }}
+      style={{ backgroundImage: "url('/drive-images/malassezia-bg.png')" }}
     >
       {/* 오버레이 */}
       <div className="absolute inset-0 bg-black/55" />
@@ -127,10 +128,16 @@ const Malassezia = ({
                 : `참고 — 약한·개인차 성분 ${res.flagged.length}개`}
             </h2>
 
-            {/* 요약 한 줄 */}
-            <p className="mb-4 text-sm text-white/70">
-              {buildSummary(res.total, res.counts)}
-            </p>
+            {/* 요약 한 줄 — styled dot 사용 */}
+            <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/70">
+              <span>총 {res.total}개 성분 중</span>
+              {buildSummaryParts(res.total, res.counts).map((p, i, arr) => (
+                <span key={i} className="flex items-center gap-1">
+                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${p.color}`} />
+                  <span>{p.count}개{i < arr.length - 1 ? "," : ""}</span>
+                </span>
+              ))}
+            </div>
 
             {/* 성분 테이블: 점 + 성분명 + 분류 */}
             {res.flagged.length > 0 && (

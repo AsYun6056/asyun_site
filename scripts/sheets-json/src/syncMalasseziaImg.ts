@@ -74,7 +74,10 @@ async function main() {
   await Promise.all(
     toDownload.map((file) =>
       limit(async () => {
-        const destPath = path.join(DRIVE_IMAGE_DIR, file.name);
+        // 한글·공백 파일명 대신 고정 ASCII 이름으로 저장
+        const ext = path.extname(file.name) || ".png";
+        const destName = `malassezia-bg${ext}`;
+        const destPath = path.join(DRIVE_IMAGE_DIR, destName);
         await withRetry(() =>
           new Promise<void>((resolve, reject) => {
             drive.files.get({ fileId: file.id, alt: "media" }, { responseType: "stream" })
@@ -87,8 +90,8 @@ async function main() {
               .catch(reject);
           })
         );
-        meta.files[file.id] = { name: file.name, md5: file.md5Checksum || "" };
-        console.log(`⬇️  downloaded: ${file.name}`);
+        meta.files[file.id] = { name: destName, md5: file.md5Checksum || "" };
+        console.log(`⬇️  downloaded: ${file.name} → ${destName}`);
       })
     )
   );

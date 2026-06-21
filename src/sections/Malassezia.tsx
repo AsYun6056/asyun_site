@@ -61,8 +61,8 @@ const Malassezia = ({
       className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-center bg-[#555]"
       style={{ backgroundImage: "url('/drive-images/malassezia-bg.png')" }}
     >
-      {/* 오버레이 */}
-      <div className="absolute inset-0 bg-black/55" />
+      {/* 오버레이 — 왼쪽(텍스트 영역)은 진하고 오른쪽(인물)은 투명하게 */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/10" />
 
       {/* 콘텐츠 */}
       <div
@@ -75,7 +75,7 @@ const Malassezia = ({
             <h1 className="text-3xl leading-snug font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
               말라세지아 모낭염 유발성분,
               <br />
-              <span className="text-[#b83330]">에즈윤과 함께 체크해요~</span>
+              <span className="text-white">에즈윤과 함께 체크해요~</span>
             </h1>
 
             <p className="mt-5 text-white/80 md:text-lg">

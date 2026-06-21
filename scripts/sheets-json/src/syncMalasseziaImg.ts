@@ -8,7 +8,8 @@ import { loadServiceAccount } from ".";
 type SAJson = { client_email: string; private_key: string };
 
 const DRIVE_FOLDER_ID = process.env.MALASSEZIA_FOLDER_ID;
-const DRIVE_IMAGE_DIR = process.env.DRIVE_IMAGE_DIR || "public/drive-images";
+// 쇼핑몰 이미지와 공유하는 DRIVE_IMAGE_DIR 대신 전용 경로 고정
+const DRIVE_IMAGE_DIR = "public/drive-images";
 
 async function withRetry<T>(fn: () => Promise<T>, times = 3, delayMs = 800): Promise<T> {
   let lastErr: unknown;
@@ -88,7 +89,7 @@ async function main() {
       })
     );
     meta.files[file.id] = { name: destName, md5: file.md5Checksum || "" };
-    console.log(`⬇️  downloaded: ${file.name} → ${destName}`);
+    console.log(`⬇️  downloaded: ${file.name} → ${destPath} (절대경로: ${path.resolve(destPath)})`);
   }
 
   const keepIds = new Set(files.map((f) => f.id));

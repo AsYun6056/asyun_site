@@ -24,7 +24,7 @@ const Contact = ({
             </div>
           </div>
           <div className="order-2 w-full md:w-[45%] h-full md:ml-24">
-            <ul className="h-full flex flex-col justify-center items-start text-xl md:pl-24 leading-10">
+            <ul className="h-full flex flex-col justify-center items-start text-xl md:pl-24 leading-10 gap-4 sm:gap-6">
               <li className="flex items-center space-x-3 p-4 h-14 sm:h-20">
                 <img
                   src="/icons/mail.svg"
@@ -33,16 +33,6 @@ const Contact = ({
                 />
                 <span className="text-base sm:text-xl md:text-lg lg:text-xl font-nanum text-white">
                   94yjung@naver.com
-                </span>
-              </li>
-              <li className="flex items-center space-x-3 p-4 h-14 sm:h-20">
-                <img
-                  src="/icons/call.svg"
-                  alt="Call"
-                  className="w-8 h-8 sm:w-12 sm:h-12 block object-contain"
-                />
-                <span className="text-base sm:text-xl md:text-lg lg:text-xl font-nanum text-white">
-                  +82 010 6740 9786
                 </span>
               </li>
               <li className="flex items-center space-x-3 p-4 h-14 sm:h-20">

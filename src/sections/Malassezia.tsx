@@ -58,33 +58,33 @@ const Malassezia = ({
   return (
     <div
       ref={refItem}
-      className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-center bg-[#555]"
-      style={{ backgroundImage: "url('/drive-images/malassezia-bg.png')" }}
+      className="relative w-full min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] bg-cover bg-[#555]"
+      style={{ backgroundImage: "url('/drive-images/malassezia-bg.png')", backgroundPosition: "65% center" }}
     >
-      {/* 오버레이 — 왼쪽(텍스트 영역)은 진하고 오른쪽(인물)은 투명하게 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/10" />
+      {/* 모바일: 균일 어두운 오버레이 / 데스크탑: 왼쪽→오른쪽 그라데이션 */}
+      <div className="absolute inset-0 bg-black/60 md:bg-none md:bg-gradient-to-r md:from-black/70 md:via-black/45 md:to-black/10" />
 
       {/* 콘텐츠 */}
       <div
-        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-6 py-14 md:px-16 md:py-20 max-w-2xl transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+        className={`relative z-10 flex flex-col justify-center min-h-[calc(100dvh-50px)] md:min-h-[calc(100dvh-60px)] px-5 py-10 md:px-16 md:py-20 max-w-[80%] md:max-w-2xl transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
       >
 
         {/* ── 입력 화면 ── */}
         {phase === "input" && (
           <>
-            <h1 className="text-3xl leading-snug font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
+            <h1 className="text-[1.45rem] leading-tight font-semibold text-white md:text-[2.6rem] md:leading-[1.25]">
               말라세지아 모낭염 유발성분,
               <br />
               <span className="text-white">에즈윤과 함께 체크해요~</span>
             </h1>
 
-            <p className="mt-5 text-white/80 md:text-lg">
+            <p className="mt-3 text-sm text-white/80 md:mt-5 md:text-lg">
               민감 피부일수록, 성분 확인을 더 꼼꼼하게!
               <br />
               쉽고 빠르게 말라세지아 모낭염 유발 성분을 체크해 보세요~
             </p>
 
-            <p className="mt-4 text-white/90">
+            <p className="mt-3 text-sm text-white/90 md:mt-4 md:text-base">
               ▼{" "}
               <button onClick={() => setGuideOpen(true)} className="underline text-white/90">
                 사용 가이드

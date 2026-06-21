@@ -76,6 +76,9 @@ const Header = ({
           >
             Guide
           </li>
+          <li className="cursor-pointer pl-7">
+            <a href="/malassezia">Malassezia</a>
+          </li>
           <li
             className="cursor-pointer pl-7"
             onClick={() => scrollToSection(chatRef)}
@@ -155,6 +158,9 @@ const Header = ({
             onClick={() => scrollToSection(guideRef)}
           >
             Guide
+          </li>
+          <li className="cursor-pointer">
+            <a href="/malassezia">Malassezia</a>
           </li>
           <li
             className="cursor-pointer"

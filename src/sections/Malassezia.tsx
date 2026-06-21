@@ -74,7 +74,7 @@ const Malassezia = ({
         {/* ── 입력 화면 ── */}
         {phase === "input" && (
           <>
-            <div className="text-[1.1rem] font-semibold text-white leading-snug md:text-[2.6rem] md:leading-[1.25]">
+            <div className="text-[1.35rem] font-semibold text-white leading-snug md:text-[2.6rem] md:leading-[1.25]">
               말라세지아 모낭염 유발성분,
               <br />
               <span className="text-white">에즈윤과 함께 체크해요~</span>
